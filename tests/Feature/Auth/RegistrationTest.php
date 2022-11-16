@@ -3,7 +3,9 @@
 namespace Tests\Feature\Auth;
 
 use App\Providers\RouteServiceProvider;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class RegistrationTest extends TestCase
@@ -21,9 +23,16 @@ class RegistrationTest extends TestCase
     {
         $response = $this->post('/register', [
             'name' => 'Test User',
+            'sex' => 'M',
+            'matricule' => '22INI09783',
             'email' => 'test@example.com',
+            'phone' => "344564653423",
             'password' => 'password',
             'password_confirmation' => 'password',
+            'email_verified_at' => Carbon::now(),
+            'remember_token' => Str::random(10),
+            'active' => 1,
+            'admin' => 0
         ]);
 
         $this->assertAuthenticated();
