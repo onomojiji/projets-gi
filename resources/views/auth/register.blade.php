@@ -17,48 +17,73 @@
             <div class="col-md-8 my-auto py-5 py-md-0">
                 <h1 class="">{{__("Inscription")}}</h1>
                 <div class="row shadow px-2 pt-md-3 pb-md-5 rounded">
-                    <form action="" method="post">
+
+                    @if ($errors->any())
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <div class="alert alert-danger" role="alert">
+                                    {{$error}}
+                                </div>
+                            @endforeach
+                        </ul>
+                    @endif
+
+                    @if (session('fail'))
+                        <div class="alert alert-danger" role="alert">
+                            {{ session('success') }}
+                        </div>
+                    @endif
+
+                    <form action="{{route("register.store")}}" method="post">
+                        @csrf
                         <div class="row my-3 form-group">
                             <div class="col-md-6">
                                 <label for="name" class="form-label fw-bold">{{("Nom(s) et prenom(s)")}}</label>
-                                <input type="text" class="form-control form-control-lg" id="matricule" autofocus>
+                                <input type="text" class="form-control form-control-lg" id="name" name="name" autofocus required>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-3">
+                                <label for="sex" class="form-label fw-bold">{{("Sexe")}}</label>
+                                <select class="form-select form-select-lg" aria-label=".form-select-lg example" id="sex" name="sex" required>
+                                    <option value="M">{{__("Masculin")}}</option>
+                                    <option value="F">{{__("Feminin")}}</option>
+                                </select>                                  
+                            </div>
+                            <div class="col-md-3">
                                 <label for="matricule" class="form-label fw-bold">{{("Matricule")}}</label>
-                                <input type="text" class="form-control form-control-lg" id="matricule">
+                                <input type="text" class="form-control form-control-lg" id="matricule" name="matricule" required>
                             </div>
                         </div>
 
                         <div class="row my-3 form-group">
                             <div class="col-md-6">
                                 <label for="birth_date" class="form-label fw-bold">{{("Date de naissance")}}</label>
-                                <input type="date" class="form-control form-control-lg" id="birth_date">
+                                <input type="date" class="form-control form-control-lg" id="birth_date" name="birth_date" required>
                             </div>
                             <div class="col-md-6">
                                 <label for="birth_place" class="form-label fw-bold">{{("Lieu de naissance")}}</label>
-                                <input type="text" class="form-control form-control-lg" id="birth_place">
+                                <input type="text" class="form-control form-control-lg" id="birth_place" name="birth_place" required>
                             </div>
                         </div>
 
                         <div class="row my-3 form-group">
                             <div class="col-md-6">
                                 <label for="email" class="form-label fw-bold">{{("Adresse email")}}</label>
-                                <input type="email" class="form-control form-control-lg" id="email">
+                                <input type="email" class="form-control form-control-lg" id="email" name="email" required>
                             </div>
                             <div class="col-md-6">
                                 <label for="phone" class="form-label fw-bold">{{("Numero de telephone")}}</label>
-                                <input type="tel" class="form-control form-control-lg" id="phone">
+                                <input type="tel" class="form-control form-control-lg" id="phone" name="phone" required>
                             </div>
                         </div>
 
                         <div class="row my-3 form-group">
                             <div class="col-md-6">
                                 <label for="password" class="form-label fw-bold">{{("Mot de passe")}}</label>
-                                <input type="password" class="form-control form-control-lg" id="password">
+                                <input type="password" class="form-control form-control-lg" id="password" name="password" required>
                             </div>
                             <div class="col-md-6">
-                                <label for="confirm" class="form-label fw-bold">{{("Confirmation")}}</label>
-                                <input type="password" class="form-control form-control-lg" id="confirm">
+                                <label for="confirmpassword" class="form-label fw-bold">{{("Confirmation")}}</label>
+                                <input type="password" class="form-control form-control-lg" id="confirm" name="confirmpassword" required>
                             </div>
                         </div>
 

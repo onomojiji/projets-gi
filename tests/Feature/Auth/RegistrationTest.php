@@ -28,11 +28,9 @@ class RegistrationTest extends TestCase
             'email' => 'test@example.com',
             'phone' => "344564653423",
             'password' => 'password',
-            'password_confirmation' => 'password',
-            'email_verified_at' => Carbon::now(),
-            'remember_token' => Str::random(10),
-            'active' => 1,
-            'admin' => 0
+            'confirmpassword' => 'password',
+            'birth_date' => '2002-09-10',
+            'birth_place' => 'Douala'
         ]);
 
         $this->assertAuthenticated();

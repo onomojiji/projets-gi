@@ -17,7 +17,25 @@
             <div class="col-md-4 my-auto py-5 py-md-0">
                 <h1 class="">{{__("Bienvenue, connectez vous pour continuer !")}}</h1>
                 <div class="row shadow px-2 pt-md-2 pb-md-5 rounded">
-                    <form action="" method="post">
+
+                    @if ($errors->any())
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <div class="alert alert-danger" role="alert">
+                                    {{$error}}
+                                </div>
+                            @endforeach
+                        </ul>
+                    @endif
+
+                    @if (session('fail'))
+                        <div class="alert alert-danger" role="alert">
+                            {{ session('success') }}
+                        </div>
+                    @endif
+
+                    <form action="{{route("login.store")}}" method="post">
+                        @csrf
                         <div class="my-3">
                             <label for="matricule" class="form-label fw-bold">{{("Matricule")}}</label>
                             <input type="text" class="form-control form-control-lg" id="matricule" name="matricule" autofocus>
