@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\StudentController;
+use App\Http\Controllers\TeacherController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,9 +15,24 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+/*================= Students routes ==============================*/
+Route::middleware(['auth', 'isStudent', 'isActive'])->prefix("student/")->group(function () {
+    // home
+    Route::controller(StudentController::class)->group(function(){
+        Route::get("home", "home")->name("student.home");
+    });
+    
+});
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth'])->name('dashboard');
+/*================= Teachers routes ==============================*/
+Route::middleware(['auth', 'isTeacher', 'isActive'])->prefix("teacher/")->group(function () {
+    // home
+    Route::controller(TeacherController::class)->group(function(){
+        Route::get("home", "home")->name("teacher.home");
+    });
+    
+});
 
+
+require __DIR__.'/admin.php';
 require __DIR__.'/auth.php';

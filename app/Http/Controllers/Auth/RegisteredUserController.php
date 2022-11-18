@@ -47,7 +47,7 @@ class RegisteredUserController extends Controller
         ]);
 
         if ($request->password !== $request->confirmpassword) {
-            return redirect()->route("register", app()->getLocale())->with("fail", __("password not match !"));
+            return redirect()->route("register")->with("fail", __("password not match !"));
         }
 
         $user = User::create([
@@ -69,6 +69,6 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(RouteServiceProvider::HOME);
+        return redirect()->route("student.home");
     }
 }

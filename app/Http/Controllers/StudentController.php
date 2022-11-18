@@ -7,4 +7,7 @@ use Illuminate\Http\Request;
 class StudentController extends Controller
 {
     //
+    public function home(){
+        return view('student.home');
+    }
 }

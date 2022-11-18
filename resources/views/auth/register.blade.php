@@ -15,7 +15,7 @@
                 <img class="img-fluid" style="height: 100vh; width: 100vw" src="{{asset("images/logo.png")}}" alt="enspd" srcset="">
             </div>
             <div class="col-md-8 my-auto py-5 py-md-0">
-                <h1 class="">{{__("Inscription")}}</h1>
+                <h1 class="">{{__("Inscrivez-vous")}}</h1>
                 <div class="row shadow px-2 pt-md-3 pb-md-5 rounded">
 
                     @if ($errors->any())
@@ -30,7 +30,7 @@
 
                     @if (session('fail'))
                         <div class="alert alert-danger" role="alert">
-                            {{ session('success') }}
+                            {{ session('fail') }}
                         </div>
                     @endif
 

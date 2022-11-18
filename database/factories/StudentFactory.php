@@ -14,7 +14,7 @@ class StudentFactory extends Factory
     public function definition()
     {
         return [
-            'user_id' => $this->faker->numberBetween(2,51),
+            'user_id' => $this->faker->unique()->numberBetween(2,51),
             'birth_date' => $this->faker->date('d-m-Y', now()),
             'birth_place' => $this->faker->city(),
         ];
