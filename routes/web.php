@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ClasseController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TeacherController;
 use Illuminate\Support\Facades\Route;
@@ -29,6 +30,17 @@ Route::middleware(['auth', 'isTeacher', 'isActive'])->prefix("teacher/")->group(
     // home
     Route::controller(TeacherController::class)->group(function(){
         Route::get("home", "home")->name("teacher.home");
+    });
+
+    // classes
+    Route::controller(ClasseController::class)->group(function(){
+        Route::get("classes", 'index')->name('classes.index');
+        Route::get("classes/{id}", 'show')->name("classes.show");
+        Route::get('classes/join/inimini/{token}', 'join')->name('classes.join');
+        Route::get("classes/generate/link/{id}", 'generateLink')->name("classes.generate.link");
+        Route::post("classes/store", 'store')->name("classes.store");
+        Route::post("classes/{id}", 'updateName')->name("classes.update.name");
+        
     });
     
 });
