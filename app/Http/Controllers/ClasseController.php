@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Middleware\IsTeacher;
 use App\Models\Classe;
 use App\Models\ClassStudent;
 use App\Models\Student;
@@ -19,7 +20,7 @@ class ClasseController extends Controller
         $student = ['user' => Auth::user(), 'student' => Auth::user()->student];
         $years = Year::all();
         $classes = [];
-        foreach (Classe::all() as $class) {
+        foreach (Classe::where('teacher_id', $teacher['teacher']->id)->get() as $class) {
             $count = count(ClassStudent::where('classe_id', $class->id)->get());
             array_push($classes, ['classe' => $class, 'year' => $class->year->value, 'count' => $count]);
         }
@@ -40,20 +41,20 @@ class ClasseController extends Controller
             'year_id' => ['required', 'integer']
         ]);
 
-        $class = Classe::create(
+        Classe::create(
             $request->all()
         );
 
-        return redirect()->route('classes.index');
+        return redirect()->route('teacher.classes.index');
     }
 
-    // show class
+    // Teacher show class
     public function show(int $id){
-        $class = Classe::find($id);
+        $classe = Classe::find($id);
         $classStudents = ClassStudent::where('classe_id', $id)->get();
         $cs = [];
         $teacher = Teacher::where('user_id', Auth::user()->id)->first();
-        $isTeacher = Teacher::find($teacher->id) != null;
+        $isTeacher = $teacher != null;
 
         foreach ($classStudents as $class) {
             $student = Student::find($class->student_id);
@@ -61,7 +62,12 @@ class ClasseController extends Controller
             array_push($cs, ['student' => $student, 'user' => $user]);
         }
 
-        return view('teacher.classes.show', ['classe' => $class, 'classStudent' => $cs, 'isTeacher' => $isTeacher]);
+        if ($isTeacher) {
+            return view('teacher.classes.show', ['classe' => $classe, 'classStudent' => $cs]);
+        } else {
+            return view('student.classes.show', ['classe' => $classe, 'teacher' => $classe->teacher->user->name]);
+        }
+           
     }
 
     // join a class with link
@@ -91,7 +97,7 @@ class ClasseController extends Controller
             ]);
         }
 
-        return redirect()->route("classes.show", ['id' => $class->id])->with('success', 'Vous avez integré le cours'.$class->name." avec succès");
+        return view("teacher.classes.show", ['id' => $class->id])->with('success', 'Vous avez integré le cours'.$class->name." avec succès");
         
     }
 
@@ -105,7 +111,7 @@ class ClasseController extends Controller
         
         $class->update(['name' => $request->name]);
 
-        return redirect()->route("classes.show", ['id' => $id])->with('success', 'Cours modifié avec succès');
+        return redirect()->route("teacher.classes.show", ['id' => $id])->with('success', 'Cours modifié avec succès');
     }
 
     // generate token
@@ -119,7 +125,7 @@ class ClasseController extends Controller
 
         $class->update(['token' => $token]);
 
-        return redirect()->route("classes.show", ['id'=>$id])->with('success', 'Nouveau lien généré avec succès');
+        return redirect()->route("teacher.classes.show", ['id'=>$id])->with('success', 'Nouveau lien généré avec succès');
     }
 
 }

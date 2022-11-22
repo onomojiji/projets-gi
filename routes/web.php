@@ -22,6 +22,14 @@ Route::middleware(['auth', 'isStudent', 'isActive'])->prefix("student/")->group(
     Route::controller(StudentController::class)->group(function(){
         Route::get("home", "home")->name("student.home");
     });
+
+    // classes
+    Route::controller(ClasseController::class)->group(function(){
+        Route::get("classes/{id}", 'show')->name("student.classes.show");
+        Route::get('classes/join/inimini/{token}', 'join')->name('student.classes.join');
+        Route::get("classes/generate/link/{id}", 'generateLink')->name("student.classes.generate.link");
+        
+    });
     
 });
 
@@ -34,12 +42,11 @@ Route::middleware(['auth', 'isTeacher', 'isActive'])->prefix("teacher/")->group(
 
     // classes
     Route::controller(ClasseController::class)->group(function(){
-        Route::get("classes", 'index')->name('classes.index');
-        Route::get("classes/{id}", 'show')->name("classes.show");
-        Route::get('classes/join/inimini/{token}', 'join')->name('classes.join');
-        Route::get("classes/generate/link/{id}", 'generateLink')->name("classes.generate.link");
-        Route::post("classes/store", 'store')->name("classes.store");
-        Route::post("classes/{id}", 'updateName')->name("classes.update.name");
+        Route::get("classes", 'index')->name('teacher.classes.index');
+        Route::get("classes/{id}", 'show')->name("teacher.classes.show");
+        Route::get("classes/generate/link/{id}", 'generateLink')->name("teacher.classes.generate.link");
+        Route::post("classes/store", 'store')->name("teacher.classes.store");
+        Route::post("classes/{id}", 'updateName')->name("teacher.classes.update.name");
         
     });
     

@@ -16,6 +16,6 @@ class Student extends Model
     }
 
     public function classe_students(){
-        return $this->belongsToMany(ClassStudent::class);
+        return $this->hasOne(ClassStudent::class);
     }
 }

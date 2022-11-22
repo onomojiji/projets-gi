@@ -29,7 +29,7 @@
                 <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
                   + Ajouter un nouveau cours
                 </button>
-                <form method="post" action="{{route("classes.store")}}" class="dropdown-menu p-4">
+                <form method="post" action="{{route("teacher.classes.store")}}" class="dropdown-menu p-4">
                   @csrf
                     <div class="mb-3">
                     <label for="name" class="form-label">Nom du cours</label>
@@ -91,7 +91,7 @@
                             
                         </div>
                         <div class="card-footer">
-                            <a href="{{route("classes.show", ['id'=> $classe["classe"]->id])}}" class="btn btn-primary w-100">{{__("Voir le cours")}}</a>
+                            <a href="{{route("teacher.classes.show", ['id'=> $classe["classe"]->id])}}" class="btn btn-primary w-100">{{__("Voir le cours")}}</a>
                         </div>
                     </div>
                 </div>

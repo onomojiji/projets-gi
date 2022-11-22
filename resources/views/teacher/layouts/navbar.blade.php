@@ -11,7 +11,7 @@
             <a class="nav-link active" aria-current="page" href="{{route("teacher.home")}}">{{("Accueil")}}</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{{route("classes.index")}}">{{__("Mes cours")}}</a>
+            <a class="nav-link" href="{{route("teacher.classes.index")}}">{{__("Mes cours")}}</a>
           </li>
         </ul>
         <form class="d-flex" role="search">

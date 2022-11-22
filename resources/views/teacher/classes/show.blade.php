@@ -2,42 +2,41 @@
 
 @section("content")
     <div class="mb-3" style="padding-top: 5rem; border-radius : 10px;background-image: url({{asset('images/classe2.jpg')}}); background-size: cover;">
+        
         <p class="h1 text-center mx-1" style="margin-bottom: 3rem">{{ $classe->name }}</p>
         
-        @if ($isTeacher)
-            <div class="row">
-                <div class="col-md-8 text-start">
-                    @if ($classe->token == null)
-                        <a href="{{route("classes.generate.link", ['id'=>$classe->id])}}" class="m-1 btn btn-info">{{__("Generer le lien d'inscriprion")}}</a>
-                    @else
-                        <div class="input-group m-1">
-                            <input type="text" class="form-control" value="{{ "http://localhost:8000/teacher/classes/join/inimini/".$class->token }}" disabled aria-label="Recipient's username" aria-describedby="button-addon2">
-                            <a class="btn btn-primary" href="{{route("classes.generate.link", ['id'=>$classe->id])}}" id="button-addon2">{{__("Generer un nouveau lien")}}</a>
-                        </div>
-                          
-                    @endif
-                </div>
-
-                <div class="col-md-4 text-end">
-                    <div class="dropdown m-1">
-                        <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
-                            Modifier le cours
-                        </button>
-                        <form method="post" action="{{route("classes.update.name", ['id' => $classe->id])}}" class="dropdown-menu p-4">
-                            @csrf
-                            <div class="mb-3">
-                                <label for="name" class="form-label">{{__("Nom du cours")}}</label>
-                                <input type="text" class="form-control" id="name" name="name" value="{{ $classe->name }}">
-                            </div>
-                            <div class="row">
-                                <button type="submit" class="btn btn-primary w-75 mx-auto">{{__("Enregistrer")}}</button>
-                            </div>
-                        </form>
+        <div class="row">
+            <div class="col-md-8 text-start">
+                @if ($classe->token == null)
+                    <a href="{{route("teacher.classes.generate.link", ['id'=>$classe->id])}}" class="m-1 btn btn-info">{{__("Generer le lien d'inscriprion")}}</a>
+                @else
+                    <div class="input-group m-1">
+                        <input type="text" class="form-control" value="{{ "http://localhost:8000/student/classes/join/inimini/".$classe->token }}" disabled aria-label="Recipient's username" aria-describedby="button-addon2">
+                        <a class="btn btn-primary" href="{{route("teacher.classes.generate.link", ['id'=>$classe->id])}}" id="button-addon2">{{__("Generer un nouveau lien")}}</a>
                     </div>
-                </div>
-                
+                        
+                @endif
             </div>
-        @endif
+
+            <div class="col-md-4 text-end">
+                <div class="dropdown m-1">
+                    <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+                        Modifier le cours
+                    </button>
+                    <form method="post" action="{{route("teacher.classes.update.name", ['id' => $classe->id])}}" class="dropdown-menu p-4">
+                        @csrf
+                        <div class="mb-3">
+                            <label for="name" class="form-label">{{__("Nom du cours")}}</label>
+                            <input type="text" class="form-control" id="name" name="name" value="{{ $classe->name }}">
+                        </div>
+                        <div class="row">
+                            <button type="submit" class="btn btn-primary w-75 mx-auto">{{__("Enregistrer")}}</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+        </div>
         
     </div>
 

@@ -12,10 +12,10 @@ class ClassStudent extends Model
     protected $fillable = ['classe_id', 'student_id'];
 
     public function classe(){
-        return $this->hasOne(Classe::class);
+        return $this->belongsTo(Classe::class);
     }
 
     public function student(){
-        return $this->hasOne(Student::class);
+        return $this->belongsTo(Student::class);
     }
 }
