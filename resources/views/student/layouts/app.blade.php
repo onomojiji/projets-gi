@@ -15,7 +15,7 @@
         @include("student.layouts.navbar")
 
         <div class="container-fluid">
-            <div class="my-3">
+            <div class="my-5 py-5">
                 @yield("content")
             </div>
             @include("student.layouts.footer")

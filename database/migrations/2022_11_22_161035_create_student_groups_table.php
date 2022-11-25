@@ -1,12 +1,12 @@
 <?php
 
-use App\Models\Teacher;
-use App\Models\Year;
+use App\Models\Group;
+use App\Models\Student;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateClassesTable extends Migration
+class CreateStudentGroupsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -15,12 +15,10 @@ class CreateClassesTable extends Migration
      */
     public function up()
     {
-        Schema::create('classes', function (Blueprint $table) {
+        Schema::create('student_groups', function (Blueprint $table) {
             $table->id();
-            $table->string("name");
-            $table->string("token")->nullable()->unique();
-            $table->foreignIdFor(Year::class)->constrained()->onDelete("cascade");
-            $table->foreignIdFor(Teacher::class);
+            $table->foreignIdFor(Group::class)->constrained()->onDelete("cascade");
+            $table->foreignIdFor(Student::class)->constrained()->onDelete("cascade");
             $table->timestamps();
         });
     }
@@ -32,6 +30,6 @@ class CreateClassesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('classes');
+        Schema::dropIfExists('student_groups');
     }
 }

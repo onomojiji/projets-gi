@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Middleware\IsTeacher;
 use App\Models\Classe;
 use App\Models\ClassStudent;
+use App\Models\Group;
 use App\Models\Student;
+use App\Models\StudentGroup;
 use App\Models\Teacher;
 use App\Models\Year;
 use Illuminate\Http\Request;
@@ -52,9 +54,26 @@ class ClasseController extends Controller
     public function show(int $id){
         $classe = Classe::find($id);
         $classStudents = ClassStudent::where('classe_id', $id)->get();
+        $groups = Group::where("classe_id", $id)->get();
         $cs = [];
         $teacher = Teacher::where('user_id', Auth::user()->id)->first();
         $isTeacher = $teacher != null;
+
+        if (!$isTeacher) {
+            foreach ($groups as $group) {
+                $isInGroup = StudentGroup::where("group_id", $group->id)->where("student_id", Auth::user()->student->id)->first();
+                if ($isInGroup != null) {
+                    $isInGroup = True;
+                    $myGroup = $group;
+                    break;
+                }else {
+                    $isInGroup = False;
+                    $myGroup = null;
+                }
+            }
+        }
+
+        
 
         foreach ($classStudents as $class) {
             $student = Student::find($class->student_id);
@@ -63,15 +82,29 @@ class ClasseController extends Controller
         }
 
         if ($isTeacher) {
-            return view('teacher.classes.show', ['classe' => $classe, 'classStudent' => $cs]);
+            return view(
+                'teacher.classes.show', [
+                    'classe' => $classe, 
+                    'classStudent' => $cs, 
+                    "groups" => $groups
+                ]
+            );
         } else {
-            return view('student.classes.show', ['classe' => $classe, 'teacher' => $classe->teacher->user->name]);
+            return view(
+                'student.classes.show', [
+                    'classe' => $classe, 
+                    'teacher' => $classe->teacher->user->name, 
+                    "groups" => $groups,
+                    'isInGroup' => $isInGroup,
+                    'myGroup' => $myGroup
+                ]
+            );
         }
            
     }
 
     // join a class with link
-    public function join(Request $request, string $token){ 
+    public function join(string $token){ 
 
         $class = Classe::where('token', $token)->first();
         $student = Student::where('user_id',Auth::user()->id)->first();

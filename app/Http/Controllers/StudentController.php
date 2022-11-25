@@ -21,4 +21,6 @@ class StudentController extends Controller
 
         return view('student.home', ["classes" => $classes, "years" => $years]);
     }
+
+    // 
 }

@@ -1,6 +1,9 @@
-<footer class="main-footer bg-light">
-    Copyright &copy; <span id="date"></span> <a href="#" target="_blank" rel="noopener noreferrer">{{__("onomo_jb")}}</a>
-  </footer>
+<hr>
+<footer class="py-5 bg-light text-center">
+    Copyright &copy; <a href="http://onomojb.000webhostapp.com" target="_blank" rel="noopener noreferrer">{{__("onomo_jb")}}</a>
+    <span id="date"></span>
+    Tous droits reservés.
+</footer>
 
 <script>
   var today = new Date();

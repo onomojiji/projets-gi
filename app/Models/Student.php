@@ -18,4 +18,7 @@ class Student extends Model
     public function classe_students(){
         return $this->hasOne(ClassStudent::class);
     }
+    public function student_groups(){
+        return $this->hasMany(StudentGroup::class);
+    }
 }
