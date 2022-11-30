@@ -1,7 +1,6 @@
 <hr>
 <footer class="py-5 bg-light text-center">
-    Copyright &copy; <a href="http://onomojb.000webhostapp.com" target="_blank" rel="noopener noreferrer">{{__("onomo_jb")}}</a>
-    <span id="date"></span>
+    Copyright &copy; <span id="date"></span> <a href="http://onomojb.000webhostapp.com" target="_blank" rel="noopener noreferrer">{{__("onomo_jb")}}</a>
     Tous droits reservés.
 </footer>
 
