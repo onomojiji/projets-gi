@@ -1,0 +1,4 @@
+dist: janny
+language : python
+script : python --version
+install : skip
