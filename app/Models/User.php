@@ -19,8 +19,12 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'sex',
+        'matricule',
         'email',
+        'phone',
         'password',
+        'active'
     ];
 
     /**
@@ -30,6 +34,7 @@ class User extends Authenticatable
      */
     protected $hidden = [
         'password',
+        'admin',
         'remember_token',
     ];
 
@@ -41,4 +46,12 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function student(){
+        return $this->hasOne(Student::class);
+    }
+
+    public function teacher(){
+        return $this->hasOne(Teacher::class);
+    }
 }

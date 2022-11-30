@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Student;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\Registered;
@@ -35,20 +36,39 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
+            'sex' => ['required'],
+            'matricule' => ['required', 'unique:users'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'phone' => ['required', 'unique:users'],
+            'password' => ['required', Rules\Password::defaults()],
+            'confirmpassword' => ['required'],
+            'birth_date' => ['required'],
+            'birth_place' => ['required']
         ]);
+
+        if ($request->password !== $request->confirmpassword) {
+            return redirect()->route("register")->with("fail", __("password not match !"));
+        }
 
         $user = User::create([
             'name' => $request->name,
+            'sex' => $request->sex,
+            'matricule' => $request->matricule,
             'email' => $request->email,
+            'phone' => $request->phone,
             'password' => Hash::make($request->password),
+        ]);
+
+        $student = Student::create([
+            'user_id' => $user->id,
+            'birth_date' => $request->birth_date,
+            'birth_place' => $request->birth_place,
         ]);
 
         event(new Registered($user));
 
         Auth::login($user);
 
-        return redirect(RouteServiceProvider::HOME);
+        return redirect()->route("student.home");
     }
 }
