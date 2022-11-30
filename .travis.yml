@@ -1,4 +1,28 @@
-dist: janny
-language : python
-script : python --version
-install : skip
+os:
+  - linux
+
+dist: focal
+
+language: php
+
+php:
+  - 7.2
+  - 7.3
+  - 7.4
+
+before_script:
+  - cp .env.travis .env
+  - composer self-update
+  - composer install --prefer-source --no-interaction --dev
+  - php artisan key:generate
+  - php artisan jwt:secret
+  - php artisan migrate
+
+before_install:
+  - mysql -e 'CREATE DATABASE realworld_test;'
+
+script:
+  - vendor/bin/phpunit
+
+services:
+  - mysql
