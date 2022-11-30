@@ -14,7 +14,7 @@ use Illuminate\Support\Str;
 class GroupController extends Controller
 {
     // create a new group
-    public function store(Request $request, int $classe_id){
+    public function store(Request $request, int $id){
 
         $request->validate([
             'title' => ['integer', 'required'],
@@ -28,14 +28,14 @@ class GroupController extends Controller
         }
 
         // check if group with same title exist in this class
-        $groupExist = Group::where("classe_id", $classe_id)->where("title", $title)->first();
+        $groupExist = Group::where("classe_id", $id)->where("title", $title)->first();
 
         if ($groupExist != null) {
-            return redirect()->route("student.classes.show", ['id' => $classe_id])->with("fail", "Un groupe avec le même nom existe déjà...");
+            return redirect()->route("student.classes.show", ['id' => $id])->with("fail", "Un groupe avec le même nom existe déjà...");
         }
 
         $group = Group::create([
-            'classe_id' => $classe_id,
+            'classe_id' => $id,
             'title' => $title,
             'delegate' =>Auth::user()->student->id,
             'theme' => $request->theme,
@@ -47,7 +47,7 @@ class GroupController extends Controller
             "student_id" => Auth::user()->student->id,
         ]);
 
-        return redirect()->route("student.classes.show", ['id' => $classe_id])->with("success", "Vous avez créé votre groupe avec succès...");
+        return redirect()->route("student.classes.show", ['id' => $id])->with("success", "Vous avez créé votre groupe avec succès...");
     }
 
     // show a group
@@ -56,6 +56,17 @@ class GroupController extends Controller
         $classe = Classe::find($classe_id);
 
         $group = Group::find($id);
+
+        $gcs = StudentGroup::where("group_id", $id)->get();
+
+        $groupStudents = [];
+
+        foreach ($gcs as $gc) {
+
+            $iD = $gc->group->delegate == $gc->student->id;
+
+            array_push($groupStudents, ['student' => $gc, 'status' => $iD]);
+        }
 
         $isDelegate = $group->delegate == Auth::user()->student->id;
         $isInGroup = StudentGroup::where("group_id", $group->id)->where("student_id", Auth::user()->student->id)->first();
@@ -72,7 +83,8 @@ class GroupController extends Controller
                 'group' => $group,
                 'classe' => $classe,
                 'isInGroup' => $isInGroup,
-                'isDelegate' => $isDelegate
+                'isDelegate' => $isDelegate,
+                'groupStudents' => $groupStudents
             ]
         );
     }
@@ -93,15 +105,16 @@ class GroupController extends Controller
 
     // update theme
     public function updateTheme(Request $request, int $id, int $classe_id){
+
         $request->validate([
             'theme' => ['required', 'min:3'],
         ]);
 
-        $group = Group::find($id);
+        $group = Group::find($classe_id);
         
         $group->update(['theme' => $request->theme]);
 
-        return redirect()->route("student.groups.show", ['id' => $id, 'classe_id' => $classe_id])->with('success', 'Theme modifié avec succès...');
+        return redirect()->route("student.groups.show", ['id' => $classe_id, 'classe_id' => $id])->with('success', 'Theme modifié avec succès...');
     }
 
     // join a group with link

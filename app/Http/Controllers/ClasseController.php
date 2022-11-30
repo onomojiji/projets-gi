@@ -60,20 +60,25 @@ class ClasseController extends Controller
         $isTeacher = $teacher != null;
 
         if (!$isTeacher) {
-            foreach ($groups as $group) {
-                $isInGroup = StudentGroup::where("group_id", $group->id)->where("student_id", Auth::user()->student->id)->first();
-                if ($isInGroup != null) {
-                    $isInGroup = True;
-                    $myGroup = $group;
-                    break;
-                }else {
-                    $isInGroup = False;
-                    $myGroup = null;
+            if (count($groups) > 0) {
+                foreach ($groups as $group) {
+                    $isInGroup = StudentGroup::where("group_id", $group->id)->where("student_id", Auth::user()->student->id)->first();
+                    if ($isInGroup != null) {
+                        $isInGroup = True;
+                        $myGroup = $group;
+                        break;
+                    }else {
+                        $isInGroup = False;
+                        $myGroup = null;
+                    }
                 }
+            } else {
+                $isInGroup = False;
+                $myGroup = null;
             }
+            
+            
         }
-
-        
 
         foreach ($classStudents as $class) {
             $student = Student::find($class->student_id);

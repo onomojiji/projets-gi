@@ -36,7 +36,7 @@
                     <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
                     + Creer mon groupe de TP
                     </button>
-                    <form method="post" action="{{route("student.groups.store", ["classe_id" => $classe->id])}}" class="dropdown-menu p-4">
+                    <form method="post" action="{{route("student.groups.store", ["id" => $classe->id])}}" class="dropdown-menu p-4">
                         @csrf
                         <div class="mb-3">
                             <label for="title" class="form-label">Groupe N°</label>
@@ -48,7 +48,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="description" class="form-label">Description</label>
-                            <textarea class="form-control" name="description" id="description" name="description" placeholder="Ex: Il est questiion pour nous de mettre en place un ERP" cols="30" rows="3"></textarea>
+                            <textarea style="resize: none" class="form-control" name="description" id="description" name="description" placeholder="Ex: Il est questiion pour nous de mettre en place un ERP" cols="30" rows="3"></textarea>
                         </div>
                         <div class="row">
                             <button type="submit" class="btn btn-primary w-75 mx-auto">{{__("Enregistrer")}}</button>
@@ -80,7 +80,11 @@
                                 
                             </div>
                             <div class="row">
-                                    <p class="card-text text-secondary">
+                                    <p style="display: -webkit-box;
+                                    -webkit-line-clamp: 2;
+                                    -webkit-box-orient: vertical;
+                                    overflow: hidden;
+                                    text-overflow: ellipsis;" class="card-text text-secondary">
                                         {{ $group->theme }} <br class="mb-2">
                                     </p>
                             </div>
