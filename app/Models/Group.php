@@ -26,4 +26,20 @@ class Group extends Model
     public function classe(){
         return $this->belongsTo(Classe::class);
     }
+
+    public function note(){
+        return $this->hasOne(Note::class);
+    }
+
+    public function likes(){
+        return $this->hasMany(Like::class);
+    }
+
+    public function comments(){
+        return $this->hasMany(Comment::class);
+    }
+
+    public function files(){
+        return $this->hasMany(File::class);
+    }
 }

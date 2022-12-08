@@ -17,4 +17,8 @@ class Teacher extends Model
     public function classes(){
         return $this->hasMany(Classe::class);
     }
+
+    public function notes(){
+        return $this->hasMany(Note::class);
+    }
 }
