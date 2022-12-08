@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Classe;
 use App\Models\ClassStudent;
+use App\Models\Comment;
+use App\Models\File;
 use App\Models\Group;
+use App\Models\Like;
 use App\Models\Student;
 use App\Models\StudentGroup;
 use Illuminate\Http\Request;
@@ -61,6 +64,27 @@ class GroupController extends Controller
 
         $groupStudents = [];
 
+        $groupComments = [];
+
+        $groupFiles = $group->files;
+
+        count($group->comments) > 0 ? $comments = count($group->comments) : $comments = 0;
+
+        count(Like::where("group_id", $id)->where("unliked", 0)->get()) > 0 ? $likes = count($group->likes) : $likes = 0;
+
+        Like::where("group_id", $id)->where("student_id", auth()->user()->student->id)->where("unliked", 0)->first() != null ? $liked = True : $liked = False;
+
+        $files = [];
+
+        foreach ($group->comments as $comment) {
+            array_push($groupComments, ['comment' => $comment, 'user'=> $comment->user]);
+        }
+
+        foreach ($groupFiles as $file) {
+            count($file->downloads) > 0 ? $downloads = count($file->downloads) : $downloads = 0;
+            array_push($files, ['file' => $file, 'downloads' => $downloads]);
+        }
+
         foreach ($gcs as $gc) {
 
             $iD = $gc->group->delegate == $gc->student->id;
@@ -84,7 +108,12 @@ class GroupController extends Controller
                 'classe' => $classe,
                 'isInGroup' => $isInGroup,
                 'isDelegate' => $isDelegate,
-                'groupStudents' => $groupStudents
+                'groupStudents' => $groupStudents,
+                'groupFiles' => $files,
+                'comments' => $comments,
+                'likes' => $likes,
+                'liked' => $liked,
+                'groupComments' => $groupComments,
             ]
         );
     }
@@ -157,4 +186,45 @@ class GroupController extends Controller
         return view("student.groups.show", ['id' => $group->id])->with('success', 'Vous avez integré le '.$group->title." avec succès");
         
     }
+
+    // like a group
+    public function like(int $classe_id, int $id){
+        $group = Group::find($id);
+        $student = Student::where('user_id', Auth::user()->id)->first();
+
+        if ($student == null) {
+            abort(403);
+        }
+
+        $exist = Like::where('group_id', $group->id)->where('student_id', $student->id)->first();
+
+        if ($exist == null) {
+            Like::create([
+                'group_id' => $group->id,
+                'student_id' => $student->id
+            ]);
+        }else {
+            $exist->update(['unliked' => !$exist->unliked]);
+        }
+
+        return redirect()->route('student.groups.show', ['id' => $group->id, 'classe_id' => $classe_id]);
+    }
+
+    // comment a group
+    public function comment(Request $request, int $classe_id, int $id){
+        $request->validate([
+            'comment' => ['required', 'min:3'],
+        ]);
+
+        $group = Group::find($id);
+
+        Comment::create([
+            'group_id' => $group->id,
+            'user_id' => Auth::user()->id,
+            'text' => $request->comment
+        ]);
+
+        return redirect()->route('student.groups.show', ['id' => $group->id, 'classe_id' => $classe_id])->with('success', 'Commentaire ajouté avec succès');
+    }
+
 }

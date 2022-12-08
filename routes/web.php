@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ClasseController;
+use App\Http\Controllers\FileController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TeacherController;
@@ -37,6 +38,14 @@ Route::middleware(['auth', 'isStudent', 'isActive'])->prefix("student/")->group(
         Route::post("groups/{id}/store", 'store')->name("student.groups.store");
         Route::post("classes/{classe_id}/groups/{id}", 'updateTheme')->name("student.groups.update.theme");
         Route::get('classes/{classe_id}/groups/join/inimini/{token}', 'join')->name('student.groups.join');
+        Route::get("classes/{classe_id}/groups/{id}/like", 'like')->name("student.groups.like");
+        Route::post("classes/{classe_id}/groups/{id}/comment", 'comment')->name("student.groups.comment");
+    });
+
+    // files
+    Route::controller(FileController::class)->group(function () {
+        Route::post("groups/{group_id}/file/update", "upload")->name("student.upload.file");
+        Route::get("group/{group_id}/file/{id}/download", "download")->name("student.download.file");
     });
     
 });

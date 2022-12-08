@@ -72,10 +72,18 @@
                     {{__("Note : ")}} <span class="text-success">{{ "18/20" }}</span> 
                 </div>
                 <div class="col text-secondary">
-                    <i class="bi bi-heart"></i> <i class="bi bi-heart-fill text-danger"></i>  <span class="text-danger">{{__("12 ")}}</span>
+                    <a href="{{ route("student.groups.like", ['classe_id' => $classe->id, 'id' => $group->id]) }}" class="text-decoration-none">
+                        @if ($liked)
+                            <i class="bi bi-heart-fill text-danger"></i>
+                            <span class="text-danger">{{ $likes }}</span>
+                        @else
+                            <i class="bi bi-heart"></i>
+                            <span class="">{{ $likes }}</span>
+                        @endif
+                    </a>
                 </div>
                 <div class="col">
-                    <i class="bi bi-chat-dots"></i> {{__("45 ")}}
+                    <i class="bi bi-chat-dots"></i> {{ $comments }}
                 </div>
             </div>
         </div>
@@ -84,17 +92,17 @@
             @if ($isDelegate)
                 <div class="dropdown">
                     <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
-                        + Ajouter un fichier
+                        <i class="fa fa-upload" aria-hidden="true"></i> Ajouter un fichier
                     </button>
-                    <form method="post" action="" class="dropdown-menu p-4">
+                    <form enctype="multipart/form-data" method="post" action="{{route("student.upload.file", ['group_id' => $group->id])}}" class="dropdown-menu p-4">
                         @csrf
                         <div class="mb-3">
                             <label for="title" class="form-label">{{__("Nom du fichier")}}</label>
                             <input type="text" class="form-control" id="title" name="title" placeholder="{{__("Ex: Cahier de charges")}}" required>
                         </div>
                         <div class="mb-3">
-                            <label for="title" class="form-label">{{__("Fichier")}}</label>
-                            <input type="file" class="form-control" id="title" name="title" required>
+                            <label for="src" class="form-label">{{__("Fichier")}}</label>
+                            <input type="file" class="form-control" id="src" name="src" required>
                         </div>
                         <div class="row">
                             <button type="submit" class="btn btn-primary w-75 mx-auto">{{__("Enregistrer")}}</button>
@@ -142,22 +150,24 @@
         </div>
         <div class="col-md-6 mb-3 mb-lg-0">
 
-            <h5>{{_("Fichiers du groupe")}}</h5>
+            @if (count($groupFiles) > 0)
+                
+            <h5>{{__("Liste des fichiers")}}</h5>
 
-            <div class="input-group m-1">
-                <input type="text" class="form-control" value="{{ "Analyse et conception ( pdf ) ( 1.2MB )" }}" disabled aria-label="Recipient's username" aria-describedby="button-addon2">
-                <a class="btn btn-primary" href="#" id="button-addon2"><i class="bi bi-arrow-down-circle"></i></a>
-            </div>
+                @foreach ($groupFiles as $gf)
 
-            <div class="input-group m-1">
-                <input type="text" class="form-control" value="{{ "Interfaces Adobe XD ( pdf ) ( 10.2MB )" }}" disabled aria-label="Recipient's username" aria-describedby="button-addon2">
-                <a class="btn btn-primary"  href="#" id="button-addon2"><i class="bi bi-arrow-down-circle"></i></a>
-            </div>
+                    <div class="input-group m-1">
+                        <input type="text" class="form-control" value="{{ $gf['file']->title }}" disabled aria-label="Recipient's username" aria-describedby="button-addon2">
+                        <a class="btn btn-primary" href="{{route("student.download.file", ['id' => $gf['file']->id, 'group_id' => $group->id])}}" id="button-addon2"> <i class="bi bi-arrow-down-circle"></i> {{ $gf['downloads'] }}</a>
+                    </div>
 
-            <div class="input-group m-1">
-                <input type="text" class="form-control" value="{{ "Projet React js ( zip ) ( 100.5MB )" }}" disabled aria-label="Recipient's username" aria-describedby="button-addon2">
-                <a class="btn btn-primary"  href="#" id="button-addon2"><i class="bi bi-arrow-down-circle"></i></a>
-            </div>
+                @endforeach
+                
+            @else
+                <p class="h5 text-center text-secondary">{{__("Aucun fichier...")}}</p>
+            @endif
+
+            
 
         </div>
     </div>
@@ -169,14 +179,14 @@
 
             <h5>{{__("Commentaires")}}</h5>
 
-            <form class="row" action="" method="post">
+            <form class="row" action="{{route("student.groups.comment", ['classe_id' => $classe->id, 'id' => $group->id])}}" method="post">
                 @csrf
                 <div class="col-9 mb-3">
                     <textarea style="resize: none" class="form-control" id="comment" name="comment" placeholder="Laissez votre commentaire ici..." cols="5" rows="2"></textarea>     
                 </div>
 
                 <div class="col-3 mb-3">
-                    <button id="comment" class="h-100 btn btn-primary form-control" type="submit">{{__("Commenter ")}} <i class="bi bi-chat-left-dots"></i></button>
+                    <button id="comment" class="h-100 btn btn-primary form-control" type="submit"> <i class="bi bi-send h3"></i></button>
                 </div>
             </form>
 
@@ -184,122 +194,27 @@
     </div>
 
     <div id="comments">
-        <div class="row mb-3">
-            <div class="col-1">
-                <i class="bi bi-person-circle text-secondary h1"></i>
-            </div>
-            <div class="col-9 border rounded">
-                <p class="text-secondary h5">{{__("Nom et prenom")}}</p>
-                <p>{{ __("Contenu du message. afjksdfhs hgsjhfg kh gjhsgdfhgsdjhfg ksdhjfgs fksdhg ffsjdgfjf gsdfsdjgf sdgjhfgsugfyusdg fyugs yugdfyusgiaufgasf sygfsatsfgsguof syu ysu gayfyusg fygsa uofgsyugo fyosfg ygsfyag yogasf yu..") }}</p>
-            </div>
-            <div class="col-1 my-auto mx-auto text-secondary">
-            <em>{{__("Aujourd'hui à 11h30min")}}</em> 
-            </div>
-        </div>
+
+        @if (count($groupComments) > 0)
+            @foreach ($groupComments as $groupComment)
+                <div class="row mb-3">
+                    <div class="col-1">
+                        <i class="bi bi-person-circle text-secondary h1"></i>
+                    </div>
+                    <div class="col-9 border rounded">
+                        <p class="text-secondary h5">{{ $groupComment["user"]->name }}</p>
+                        <p>{{ $groupComment['comment']->text }}</p>
+                    </div>
+                    <div class="col-1 my-auto mx-auto text-secondary">
+                    <em>{{ $groupComment['comment']->created_at }}</em> 
+                    </div>
+                </div>
+            @endforeach
+        @else
+            
+        @endif
+
         
-        <div class="row mb-3">
-            <div class="col-1">
-                <i class="bi bi-person-circle text-secondary h1"></i>
-            </div>
-            <div class="col-9 border rounded">
-                <p class="text-secondary h5">{{__("Nom et prenom")}}</p>
-                <p>{{ __("Contenu du message. afjksdfhs hgsjhfg kh gjhsgdfhgsdjhfg ksdhjfgs fksdhg ffsjdgfjf gsdfsdjgf sdgjhfgsugfyusdg fyugs yugdfyusgiaufgasf sygfsatsfgsguof syu ysu gayfyusg fygsa uofgsyugo fyosfg ygsfyag yogasf yu..") }}</p>
-            </div>
-            <div class="col-1 my-auto mx-auto text-secondary">
-            <em>{{__("Aujourd'hui à 11h30min")}}</em> 
-            </div>
-        </div>
-
-        <div class="row mb-3">
-            <div class="col-1">
-                <i class="bi bi-person-circle text-secondary h1"></i>
-            </div>
-            <div class="col-9 border rounded">
-                <p class="text-secondary h5">{{__("Nom et prenom")}}</p>
-                <p>{{ __("Contenu du message. afjksdfhs hgsjhfg kh gjhsgdfhgsdjhfg ksdhjfgs fksdhg ffsjdgfjf gsdfsdjgf sdgjhfgsugfyusdg fyugs yugdfyusgiaufgasf sygfsatsfgsguof syu ysu gayfyusg fygsa uofgsyugo fyosfg ygsfyag yogasf yu..") }}</p>
-            </div>
-            <div class="col-1 my-auto mx-auto text-secondary">
-            <em>{{__("Aujourd'hui à 11h30min")}}</em> 
-            </div>
-        </div>
-
-        <div class="row mb-3">
-            <div class="col-1">
-                <i class="bi bi-person-circle text-secondary h1"></i>
-            </div>
-            <div class="col-9 border rounded">
-                <p class="text-secondary h5">{{__("Nom et prenom")}}</p>
-                <p>{{ __("Contenu du message. afjksdfhs hgsjhfg kh gjhsgdfhgsdjhfg ksdhjfgs fksdhg ffsjdgfjf gsdfsdjgf sdgjhfgsugfyusdg fyugs yugdfyusgiaufgasf sygfsatsfgsguof syu ysu gayfyusg fygsa uofgsyugo fyosfg ygsfyag yogasf yu..") }}</p>
-            </div>
-            <div class="col-1 my-auto mx-auto text-secondary">
-            <em>{{__("Aujourd'hui à 11h30min")}}</em> 
-            </div>
-        </div>
-
-        <div class="row mb-3">
-            <div class="col-1">
-                <i class="bi bi-person-circle text-secondary h1"></i>
-            </div>
-            <div class="col-9 border rounded">
-                <p class="text-secondary h5">{{__("Nom et prenom")}}</p>
-                <p>{{ __("Contenu du message. afjksdfhs hgsjhfg kh gjhsgdfhgsdjhfg ksdhjfgs fksdhg ffsjdgfjf gsdfsdjgf sdgjhfgsugfyusdg fyugs yugdfyusgiaufgasf sygfsatsfgsguof syu ysu gayfyusg fygsa uofgsyugo fyosfg ygsfyag yogasf yu..") }}</p>
-            </div>
-            <div class="col-1 my-auto mx-auto text-secondary">
-            <em>{{__("Aujourd'hui à 11h30min")}}</em> 
-            </div>
-        </div>
-
-        <div class="row mb-3">
-            <div class="col-1">
-                <i class="bi bi-person-circle text-secondary h1"></i>
-            </div>
-            <div class="col-9 border rounded">
-                <p class="text-secondary h5">{{__("Nom et prenom")}}</p>
-                <p>{{ __("Contenu du message. afjksdfhs hgsjhfg kh gjhsgdfhgsdjhfg ksdhjfgs fksdhg ffsjdgfjf gsdfsdjgf sdgjhfgsugfyusdg fyugs yugdfyusgiaufgasf sygfsatsfgsguof syu ysu gayfyusg fygsa uofgsyugo fyosfg ygsfyag yogasf yu..") }}</p>
-            </div>
-            <div class="col-1 my-auto mx-auto text-secondary">
-            <em>{{__("Aujourd'hui à 11h30min")}}</em> 
-            </div>
-        </div>
-
-        <div class="row mb-3">
-            <div class="col-1">
-                <i class="bi bi-person-circle text-secondary h1"></i>
-            </div>
-            <div class="col-9 border rounded">
-                <p class="text-secondary h5">{{__("Nom et prenom")}}</p>
-                <p>{{ __("Contenu du message. afjksdfhs hgsjhfg kh gjhsgdfhgsdjhfg ksdhjfgs fksdhg ffsjdgfjf gsdfsdjgf sdgjhfgsugfyusdg fyugs yugdfyusgiaufgasf sygfsatsfgsguof syu ysu gayfyusg fygsa uofgsyugo fyosfg ygsfyag yogasf yu..") }}</p>
-            </div>
-            <div class="col-1 my-auto mx-auto text-secondary">
-            <em>{{__("Aujourd'hui à 11h30min")}}</em> 
-            </div>
-        </div>
-
-        <div class="row mb-3">
-            <div class="col-1">
-                <i class="bi bi-person-circle text-secondary h1"></i>
-            </div>
-            <div class="col-9 border rounded">
-                <p class="text-secondary h5">{{__("Nom et prenom")}}</p>
-                <p>{{ __("Contenu du message. afjksdfhs hgsjhfg kh gjhsgdfhgsdjhfg ksdhjfgs fksdhg ffsjdgfjf gsdfsdjgf sdgjhfgsugfyusdg fyugs yugdfyusgiaufgasf sygfsatsfgsguof syu ysu gayfyusg fygsa uofgsyugo fyosfg ygsfyag yogasf yu..") }}</p>
-            </div>
-            <div class="col-1 my-auto mx-auto text-secondary">
-            <em>{{__("Aujourd'hui à 11h30min")}}</em> 
-            </div>
-        </div>
-
-        <div class="row mb-3">
-            <div class="col-1">
-                <i class="bi bi-person-circle text-secondary h1"></i>
-            </div>
-            <div class="col-9 border rounded">
-                <p class="text-secondary h5">{{__("Nom et prenom")}}</p>
-                <p>{{ __("Contenu du message. afjksdfhs hgsjhfg kh gjhsgdfhgsdjhfg ksdhjfgs fksdhg ffsjdgfjf gsdfsdjgf sdgjhfgsugfyusdg fyugs yugdfyusgiaufgasf sygfsatsfgsguof syu ysu gayfyusg fygsa uofgsyugo fyosfg ygsfyag yogasf yu..") }}</p>
-            </div>
-            <div class="col-1 my-auto mx-auto text-secondary">
-            <em>{{__("Aujourd'hui à 11h30min")}}</em> 
-            </div>
-        </div>
 
     </div>
     
