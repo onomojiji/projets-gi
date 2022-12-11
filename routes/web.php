@@ -65,6 +65,12 @@ Route::middleware(['auth', 'isTeacher', 'isActive'])->prefix("teacher/")->group(
         Route::post("classes/store", 'store')->name("teacher.classes.store");
         Route::post("classes/{id}", 'updateName')->name("teacher.classes.update.name");
     });
+
+    // groups
+    Route::controller(GroupController::class)->group(function () {
+        Route::get("classes/{classe_id}/groups/{id}", 'teacherShow')->name("teacher.groups.show");
+        Route::post("classes/{classe_id}/groups/{id}", 'note')->name("teacher.groups.note");
+    });
     
 });
 
