@@ -6,6 +6,7 @@ use App\Http\Middleware\IsTeacher;
 use App\Models\Classe;
 use App\Models\ClassStudent;
 use App\Models\Group;
+use App\Models\Note;
 use App\Models\Student;
 use App\Models\StudentGroup;
 use App\Models\Teacher;
@@ -54,14 +55,14 @@ class ClasseController extends Controller
     public function show(int $id){
         $classe = Classe::find($id);
         $classStudents = ClassStudent::where('classe_id', $id)->get();
-        $groups = Group::where("classe_id", $id)->get();
         $cs = [];
+        $groups = [];
         $teacher = Teacher::where('user_id', Auth::user()->id)->first();
         $isTeacher = $teacher != null;
 
         if (!$isTeacher) {
-            if (count($groups) > 0) {
-                foreach ($groups as $group) {
+            if (count($classe->groupes) > 0) {
+                foreach ($classe->groupes as $group) {
                     $isInGroup = StudentGroup::where("group_id", $group->id)->where("student_id", Auth::user()->student->id)->first();
                     if ($isInGroup != null) {
                         $isInGroup = True;
@@ -83,7 +84,20 @@ class ClasseController extends Controller
         foreach ($classStudents as $class) {
             $student = Student::find($class->student_id);
             $user = $student->user;
-            array_push($cs, ['student' => $student, 'user' => $user]);
+
+            foreach ($classe->groupes as $classGroup) {
+                if (StudentGroup::where("student_id", $class->student_id)->where("group_id", $classGroup->id)->first() != null) {
+                    $group = $classGroup;
+                    break ;
+                }
+            }
+            
+            array_push($cs, ['student' => $student, 'user' => $user, 'group' => $group]);
+        }
+
+        foreach ($classe->groupes as $classeGroup) {
+            $NbStudents = count(StudentGroup::where('group_id', $classeGroup->id)->get());
+            array_push($groups, ['group' => $classeGroup, 'students' => $NbStudents, 'note' => $classeGroup->note]);
         }
 
         if ($isTeacher) {
@@ -91,7 +105,7 @@ class ClasseController extends Controller
                 'teacher.classes.show', [
                     'classe' => $classe, 
                     'classStudent' => $cs, 
-                    "groups" => $groups
+                    "groups" => $groups,
                 ]
             );
         } else {
@@ -99,7 +113,7 @@ class ClasseController extends Controller
                 'student.classes.show', [
                     'classe' => $classe, 
                     'teacher' => $classe->teacher->user->name, 
-                    "groups" => $groups,
+                    "groups" => $classe->groupes,
                     'isInGroup' => $isInGroup,
                     'myGroup' => $myGroup
                 ]

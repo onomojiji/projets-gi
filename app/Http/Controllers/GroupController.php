@@ -4,7 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Classe;
 use App\Models\ClassStudent;
+use App\Models\Comment;
+use App\Models\File;
 use App\Models\Group;
+use App\Models\Like;
+use App\Models\Note;
 use App\Models\Student;
 use App\Models\StudentGroup;
 use Illuminate\Http\Request;
@@ -50,7 +54,7 @@ class GroupController extends Controller
         return redirect()->route("student.classes.show", ['id' => $id])->with("success", "Vous avez créé votre groupe avec succès...");
     }
 
-    // show a group
+    // student show a group
     public function show(int $classe_id, int $id){
 
         $classe = Classe::find($classe_id);
@@ -59,7 +63,30 @@ class GroupController extends Controller
 
         $gcs = StudentGroup::where("group_id", $id)->get();
 
+        $notExist = Note::where("group_id", $id)->first();
+
         $groupStudents = [];
+
+        $groupComments = [];
+
+        $groupFiles = $group->files;
+
+        count($group->comments) > 0 ? $comments = count($group->comments) : $comments = 0;
+
+        count(Like::where("group_id", $id)->where("unliked", 0)->get()) > 0 ? $likes = count(Like::where("group_id", $id)->where("unliked", 0)->get()) : $likes = 0;
+
+        Like::where("group_id", $id)->where("student_id", auth()->user()->student->id)->where("unliked", 0)->first() != null ? $liked = True : $liked = False;
+
+        $files = [];
+
+        foreach (Comment::where("group_id", $id)->latest()->get() as $comment) {
+            array_push($groupComments, ['comment' => $comment, 'user'=> $comment->user]);
+        }
+
+        foreach ($groupFiles as $file) {
+            count($file->downloads) > 0 ? $downloads = count($file->downloads) : $downloads = 0;
+            array_push($files, ['file' => $file, 'downloads' => $downloads]);
+        }
 
         foreach ($gcs as $gc) {
 
@@ -84,9 +111,68 @@ class GroupController extends Controller
                 'classe' => $classe,
                 'isInGroup' => $isInGroup,
                 'isDelegate' => $isDelegate,
-                'groupStudents' => $groupStudents
+                'groupStudents' => $groupStudents,
+                'groupFiles' => $files,
+                'comments' => $comments,
+                'likes' => $likes,
+                'liked' => $liked,
+                'groupComments' => $groupComments,
+                'note' => $notExist,
             ]
         );
+    }
+
+    // teacher show a group
+    public function teacherShow(int $classe_id, $id){
+        $classe = Classe::find($classe_id);
+
+        $group = Group::find($id);
+
+        $gcs = StudentGroup::where("group_id", $id)->get();
+
+        $groupStudents = [];
+
+        $groupComments = [];
+
+        $groupFiles = $group->files;
+
+        $notExist = Note::where("group_id", $id)->where("teacher_id", Auth::user()->teacher->id)->first();
+
+        count($group->comments) > 0 ? $comments = count($group->comments) : $comments = 0;
+
+        count(Like::where("group_id", $id)->where("unliked", 0)->get()) > 0 ? $likes = count(Like::where("group_id", $id)->where("unliked", 0)->get()) : $likes = 0;
+
+        $files = [];
+
+        foreach (Comment::where("group_id", $id)->latest()->get() as $comment) {
+            array_push($groupComments, ['comment' => $comment, 'user'=> $comment->user]);
+        }
+
+        foreach ($groupFiles as $file) {
+            count($file->downloads) > 0 ? $downloads = count($file->downloads) : $downloads = 0;
+            array_push($files, ['file' => $file, 'downloads' => $downloads]);
+        }
+
+        foreach ($gcs as $gc) {
+
+            $iD = $gc->group->delegate == $gc->student->id;
+
+            array_push($groupStudents, ['student' => $gc, 'status' => $iD]);
+        }
+
+        return view(
+            "teacher.groups.show", [
+                'group' => $group,
+                'classe' => $classe,
+                'groupStudents' => $groupStudents,
+                'groupFiles' => $files,
+                'comments' => $comments,
+                'likes' => $likes,
+                'groupComments' => $groupComments,
+                'note' => $notExist,
+            ]
+        );
+
     }
 
     // generate token
@@ -157,4 +243,62 @@ class GroupController extends Controller
         return view("student.groups.show", ['id' => $group->id])->with('success', 'Vous avez integré le '.$group->title." avec succès");
         
     }
+
+    // like a group
+    public function like(int $classe_id, int $id){
+        $group = Group::find($id);
+        $student = Student::where('user_id', Auth::user()->id)->first();
+
+        if ($student == null) {
+            abort(403);
+        }
+
+        $exist = Like::where('group_id', $group->id)->where('student_id', $student->id)->first();
+
+        if ($exist == null) {
+            Like::create([
+                'group_id' => $group->id,
+                'student_id' => $student->id
+            ]);
+        }else {
+            $exist->update(['unliked' => !$exist->unliked]);
+        }
+
+        return redirect()->back();
+    }
+
+    // comment a group
+    public function comment(Request $request, int $classe_id, int $id){
+        $request->validate([
+            'comment' => ['required', 'min:3'],
+        ]);
+
+        $group = Group::find($id);
+
+        Comment::create([
+            'group_id' => $group->id,
+            'user_id' => Auth::user()->id,
+            'text' => $request->comment
+        ]);
+
+        return redirect()->back()->with('success', 'Commentaire ajouté avec succès');
+    }
+
+    // note a group
+    public function note(Request $request, int $classe_id, $id){
+        $request->validate([
+            'note' => ['required', 'numeric', 'min:0', 'max:20'],
+        ]);
+
+        $group = Group::find($id);
+        
+        Note::create([
+            'group_id' => $group->id,
+            'teacher_id' => Auth::user()->teacher->id,
+            'value' => $request->note
+        ]);
+
+        return redirect()->back()->with('success', 'Note ajoutée avec succès');
+    }
+
 }

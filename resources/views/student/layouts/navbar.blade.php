@@ -10,7 +10,10 @@
           <a class="nav-link active" aria-current="page" href="{{route("student.home")}}">{{("Accueil")}}</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">{{__("Mes groupes")}}</a>
+          <a class="nav-link" href="#mygroups">{{__("Mes groupes")}}</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#projects">{{__("Projets")}}</a>
         </li>
       </ul>
       <form class="d-flex" role="search">

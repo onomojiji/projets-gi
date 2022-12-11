@@ -62,19 +62,66 @@
     @endif
 
     <hr>
-    <div class="mt-2">
-        <ul class="nav nav-tabs" id="myTab" role="tablist">
-            <li class="nav-item" role="presentation">
-              <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">{{__("Etudiants")}}</button>
-            </li>
-            <li class="nav-item" role="presentation">
-              <button class="nav-link" id="disabled-tab" data-bs-toggle="tab" data-bs-target="#disabled-tab-pane" type="button" role="tab" aria-controls="disabled-tab-pane" aria-selected="false" >{{__("Groupes de TP")}}</button>
-            </li>
-          </ul>
-          <div class="tab-content" id="myTabContent">
 
-            {{-- Student tab --}}
-            <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
+    <div class="accordion" id="accordionExample">
+
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingTwo">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    {{__("Listes des groupes de TP")}}
+                </button>
+            </h2>
+            <div id="collapseTwo" class="accordion-collapse collapse show" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                    @if (count($groups) > 0)
+                        <table class="table table-hover mt-2">
+                            <thead class="table-primary">
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">{{__("Groupe")}}</th>
+                                    <th scope="col">{{__("Theme")}}</th>
+                                    <th scope="col">{{__("Membres")}}</th>
+                                    <th scope="col">{{__("Note")}}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for ($i = 1; $i <= count($groups); $i++)
+                                    <tr>
+                                        <th scope="row">{{ $i }}</th>
+                                        <td>{{ $groups[$i-1]['group']->title }}</td>
+                                        <td>
+                                            <a class="text-decoration-none" href="{{route("teacher.groups.show", ['classe_id'=> $classe->id, 'id' => $groups[$i-1]['group']->id])}}">
+                                                {{ $groups[$i-1]['group']->theme }}
+                                            </a>
+                                        </td>
+                                        <td>{{ $groups[$i-1]['students'] }}</td>
+                                        @if ($groups[$i-1]['note'] != null)
+                                            <td class="text-primary">{{ $groups[$i-1]['note']->value."/20" }}</td>
+                                        @else
+                                            <td class="text-secondary">{{ __("Non noté") }}</td>
+                                        @endif
+                                        
+                                    </tr>
+                                @endfor
+                            </tbody>
+                        </table>
+                    @else
+                        <p class="my-3 h4 text-secondary text-center">{{__("Aucun groupe de TP...")}}</p>
+                    @endif
+                </div>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="headingOne">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+              {{__("Liste des eleves")}}
+            </button>
+          </h2>
+          <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+            <div class="accordion-body">
                 @if (count($classStudent) > 0)
                     <table class="table table-hover mt-2">
                         <thead class="table-primary">
@@ -82,29 +129,34 @@
                             <th scope="col">#</th>
                             <th scope="col">{{__("Matricule")}}</th>
                             <th scope="col">{{__("Nom(s) et prenom(s)")}}</th>
+                            <th scope="col">{{__("Sexe")}}</th>
                             <th scope="col">{{__("Groupe")}}</th>
                         </tr>
                         </thead>
                         <tbody>
-                            @foreach ($classStudent as $cs)
+                            @for ($i = 1; $i <= count($classStudent); $i++)
                                 <tr>
-                                    <th scope="row">1</th>
-                                    <td>{{ $cs['user']->matricule }}</td>
-                                    <td>{{ $cs['user']->name }}</td>
-                                    <td>Groupe</td>
+                                    <th scope="row">{{ $i }}</th>
+                                    <td>{{ $classStudent[$i-1]['user']->matricule }}</td>
+                                    <td>{{ $classStudent[$i-1]['user']->name }}</td>
+                                    <td>{{ $classStudent[$i-1]['user']->sex }}</td>
+                                    <td>
+                                        <a class="text-decoration-none" href="{{route("teacher.groups.show", ['classe_id'=> $classe->id, 'id' => $classStudent[$i-1]['group']->id])}}">
+                                            {{ $classStudent[$i-1]['group']->title }}
+                                        </a> 
+                                    </td>
                                 </tr>
-                            @endforeach
+                            @endfor
                         
                         </tbody>
                     </table>
                 @else
                     <p class="my-3 h4 text-secondary text-center">{{__("Aucun eleve inscrit a ce cours..")}}</p>
                 @endif
-                
             </div>
+          </div>
+        </div>
+        
+      </div>
 
-            {{-- Groupe tab --}}
-            <div class="tab-pane fade" id="disabled-tab-pane" role="tabpanel" aria-labelledby="disabled-tab" tabindex="0">...</div>
-          </div>          
-    </div>
 @endsection

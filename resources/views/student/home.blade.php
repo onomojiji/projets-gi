@@ -23,6 +23,8 @@
     </div>
     @endif
 
+{{------------------------------ All my classes -----------------------------}}
+
     <div class="row">
         <div class="col-md-8 mb-3 mb-lg-0">
           <h3>{{__("Mes cours")}}</h3>
@@ -39,7 +41,7 @@
 
     <hr> 
 
-    <div class="row">
+    <div class="row align-item-start">
         @if (count($classes) > 0)
             @foreach ($classes as $classe)
                 <div class="col">
@@ -66,7 +68,57 @@
         
     </div>
 
-    <div class="row">
+{{----------------------------- All my groups ---------------------------------------}}
+    <div id="mygroups" class="row">
+        <div class="col-md-8 mb-3 mb-lg-0">
+          <h3>{{__("Mes groupes")}}</h3>
+        </div>
+        <div class="col-md-4">
+            <select class="form-select" aria-label=".form-select-lg example" id="year" name="year" required>
+                <option value="">{{__("Ordre alphabetique")}}</option>
+            </select>
+        </div>
+    </div>
+
+    <hr> 
+
+    <div class="row align-item-start">
+
+        @if (count($myGroups) > 0)
+            @foreach ($myGroups as $mg)
+                <div class="col">
+                    <div class="card mb-5" style="width: 18rem;">
+                        <img src="{{asset("images/folder.png")}}" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <div class="row">
+                                <h5 class="card-title">{{ $mg['group']->title }}</h5>
+                            </div>
+                            <div class="row">
+                                    <p style="display: -webkit-box;
+                                    -webkit-line-clamp: 2;
+                                    -webkit-box-orient: vertical;
+                                    overflow: hidden;
+                                    text-overflow: ellipsis;" class="card-text text-secondary">
+                                        {{ $mg['classe']->name }} <br class="mb-2">
+                                    </p>
+                            </div>
+                            <div class="row">
+                                <p class="card-text">{{ $mg['year'] }}</p>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <a href="{{route("student.groups.show", ['id' => $mg['group']->id, 'classe_id' => $mg['classe']->id])}}" class="btn btn-primary w-100">{{__("Voir le groupe")}}</a>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        @else
+            <p class="h4 text-secondary text-center">{{__("Aucun projet inscrit pour l'instant...")}}</p>
+        @endif
+
+    </div>
+
+    <div id="projects" class="row">
         <div class="col-md-8 mb-3 mb-lg-0">
           <h3>{{__("Tous les projets")}}</h3>
         </div>
@@ -82,147 +134,33 @@
 
     <hr> 
 
-    <div class="row">
+    <div class="row align-item-start">
 
-        <div class="col">
-            <div class="card mb-5" style="width: 18rem;">
-                <img src="{{asset("images/file-zip.png")}}" height="200" class="card-img-top" alt="...">
-                <div class="card-body">
-                        <h5 class="card-title">{{ "18/20 (Très bien)" }}</h5>
-                            <p style="display: -webkit-box;
-                            -webkit-line-clamp: 3;
-                            -webkit-box-orient: vertical;
-                            overflow: hidden;
-                            text-overflow: ellipsis;" class="card-text text-secondary">
-                                {{ "CONCEPTION D'UN SITE WEB DE GÉOLOCALISATION DES ÉTUDIANTS DE L' ÉCOLE NATIONALE SUPÉRIEURE POLYTECHNIQUE DE DOUALA" }} <br class="mb-2">
-                            </p>
-                    
+        @if (count($projects) > 0)
+            @foreach ($projects as $project)
+                <div class="col">
+                    <div class="card mb-5" style="width: 18rem;">
+                        <img src="{{asset("images/file-zip.png")}}" height="200" class="card-img-top" alt="...">
+                        <div class="card-body">
+                                <h5 class="card-title text-info">{{ $project['note'] }}</h5>
+                                    <p style="display: -webkit-box;
+                                    -webkit-line-clamp: 3;
+                                    -webkit-box-orient: vertical;
+                                    overflow: hidden;
+                                    text-overflow: ellipsis;" class="card-text text-secondary">
+                                        {{ $project['project']->theme }} <br class="mb-2">
+                                    </p>
+                            
+                        </div>
+                        <div class="card-footer">
+                            <a href="{{route("student.groups.show", ['id' => $project['project']->id, 'classe_id' => $project['classe']])}}" class="btn btn-primary w-100">{{__("Voir le projet")}}</a>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-footer">
-                    <a href="#" class="btn btn-primary w-100">{{__("Voir le projet")}}</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="col">
-            <div class="card mb-5" style="width: 18rem;">
-                <img src="{{asset("images/file-zip.png")}}" height="200" class="card-img-top" alt="...">
-                <div class="card-body">
-                        <h5 class="card-title">{{ "18/20 (Très bien)" }}</h5>
-                            <p style="display: -webkit-box;
-                            -webkit-line-clamp: 3;
-                            -webkit-box-orient: vertical;
-                            overflow: hidden;
-                            text-overflow: ellipsis;" class="card-text text-secondary">
-                                {{ "CONCEPTION D'UN SITE WEB DE GÉOLOCALISATION DES ÉTUDIANTS DE L' ÉCOLE NATIONALE SUPÉRIEURE POLYTECHNIQUE DE DOUALA" }} <br class="mb-2">
-                            </p>
-                    
-                </div>
-                <div class="card-footer">
-                    <a href="#" class="btn btn-primary w-100">{{__("Voir le projet")}}</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="col">
-            <div class="card mb-5" style="width: 18rem;">
-                <img src="{{asset("images/file-zip.png")}}" height="200" class="card-img-top" alt="...">
-                <div class="card-body">
-                        <h5 class="card-title">{{ "18/20 (Très bien)" }}</h5>
-                            <p style="display: -webkit-box;
-                            -webkit-line-clamp: 3;
-                            -webkit-box-orient: vertical;
-                            overflow: hidden;
-                            text-overflow: ellipsis;" class="card-text text-secondary">
-                                {{ "CONCEPTION D'UN SITE WEB DE GÉOLOCALISATION DES ÉTUDIANTS DE L' ÉCOLE NATIONALE SUPÉRIEURE POLYTECHNIQUE DE DOUALA" }} <br class="mb-2">
-                            </p>
-                    
-                </div>
-                <div class="card-footer">
-                    <a href="#" class="btn btn-primary w-100">{{__("Voir le projet")}}</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="col">
-            <div class="card mb-5" style="width: 18rem;">
-                <img src="{{asset("images/file-zip.png")}}" height="200" class="card-img-top" alt="...">
-                <div class="card-body">
-                        <h5 class="card-title">{{ "18/20 (Très bien)" }}</h5>
-                            <p style="display: -webkit-box;
-                            -webkit-line-clamp: 3;
-                            -webkit-box-orient: vertical;
-                            overflow: hidden;
-                            text-overflow: ellipsis;" class="card-text text-secondary">
-                                {{ "CONCEPTION D'UN SITE WEB DE GÉOLOCALISATION DES ÉTUDIANTS DE L' ÉCOLE NATIONALE SUPÉRIEURE POLYTECHNIQUE DE DOUALA" }} <br class="mb-2">
-                            </p>
-                    
-                </div>
-                <div class="card-footer">
-                    <a href="#" class="btn btn-primary w-100">{{__("Voir le projet")}}</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="col">
-            <div class="card mb-5" style="width: 18rem;">
-                <img src="{{asset("images/file-zip.png")}}" height="200" class="card-img-top" alt="...">
-                <div class="card-body">
-                        <h5 class="card-title">{{ "18/20 (Très bien)" }}</h5>
-                            <p style="display: -webkit-box;
-                            -webkit-line-clamp: 3;
-                            -webkit-box-orient: vertical;
-                            overflow: hidden;
-                            text-overflow: ellipsis;" class="card-text text-secondary">
-                                {{ "CONCEPTION D'UN SITE WEB DE GÉOLOCALISATION DES ÉTUDIANTS DE L' ÉCOLE NATIONALE SUPÉRIEURE POLYTECHNIQUE DE DOUALA" }} <br class="mb-2">
-                            </p>
-                    
-                </div>
-                <div class="card-footer">
-                    <a href="#" class="btn btn-primary w-100">{{__("Voir le projet")}}</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="col">
-            <div class="card mb-5" style="width: 18rem;">
-                <img src="{{asset("images/file-zip.png")}}" height="200" class="card-img-top" alt="...">
-                <div class="card-body">
-                        <h5 class="card-title">{{ "18/20 (Très bien)" }}</h5>
-                            <p style="display: -webkit-box;
-                            -webkit-line-clamp: 3;
-                            -webkit-box-orient: vertical;
-                            overflow: hidden;
-                            text-overflow: ellipsis;" class="card-text text-secondary">
-                                {{ "CONCEPTION D'UN SITE WEB DE GÉOLOCALISATION DES ÉTUDIANTS DE L' ÉCOLE NATIONALE SUPÉRIEURE POLYTECHNIQUE DE DOUALA" }} <br class="mb-2">
-                            </p>
-                    
-                </div>
-                <div class="card-footer">
-                    <a href="#" class="btn btn-primary w-100">{{__("Voir le projet")}}</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="col">
-            <div class="card mb-5" style="width: 18rem;">
-                <img src="{{asset("images/file-zip.png")}}" height="200" class="card-img-top" alt="...">
-                <div class="card-body">
-                        <h5 class="card-title">{{ "18/20 (Très bien)" }}</h5>
-                            <p style="display: -webkit-box;
-                            -webkit-line-clamp: 3;
-                            -webkit-box-orient: vertical;
-                            overflow: hidden;
-                            text-overflow: ellipsis;" class="card-text text-secondary">
-                                {{ "CONCEPTION D'UN SITE WEB DE GÉOLOCALISATION DES ÉTUDIANTS DE L' ÉCOLE NATIONALE SUPÉRIEURE POLYTECHNIQUE DE DOUALA" }} <br class="mb-2">
-                            </p>
-                    
-                </div>
-                <div class="card-footer">
-                    <a href="#" class="btn btn-primary w-100">{{__("Voir le projet")}}</a>
-                </div>
-            </div>
-        </div>
+            @endforeach
+        @else
+            <p class="h4 text-secondary text-center">{{__("Aucun projet inscrit pour l'instant...")}}</p>
+        @endif
 
     </div>
     

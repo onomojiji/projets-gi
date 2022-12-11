@@ -19,7 +19,11 @@ class Classe extends Model
         return $this->belongsTo(Teacher::class);
     }
 
-    public function classe_students(){
-        return $this->hasOne(ClassStudent::class);
+    public function students(){
+        return $this->hasMany(ClassStudent::class);
+    }
+
+    public function groupes(){
+        return $this->hasMany(Group::class);
     }
 }

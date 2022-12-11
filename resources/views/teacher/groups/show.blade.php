@@ -1,51 +1,16 @@
-@extends('student.layouts.app')
+@extends('teacher.layouts.app')
 
 @section("content")
 
     <div class="mb-2 py-2 shadow-sm" style="border-radius : 10px; background-color: rgb(224, 224, 213)">
         
         <p class="h5 text-center mx-1">
-            <a class="text-decoration-none" href="{{route("student.classes.show", ['id'=> $classe->id])}}">
+            <a class="text-decoration-none" href="{{route("teacher.classes.show", ['id'=> $classe->id])}}">
                 {{ $classe->name }}
             </a>
         </p>  
         <p class="h1 text-center mx-1">{{ $group->theme }}</p>  
         <p class="h5 text-center mx-1">{{ $group->title }}</p>  
-
-        @if ($isDelegate)
-            <div class="row">
-                <div class="col-md-8 text-start">
-                    @if ($group->token == null)
-                        <a href="{{route("student.groups.generate.link", ['id'=>$group->id, 'classe_id' => $classe->id])}}" class="m-1 btn btn-info">{{__("Generer le lien d'inscriprion")}}</a>
-                    @else
-                        <div class="input-group m-1">
-                            <input type="text" class="form-control" value="{{ "http://localhost:8000/student/classes/".$classe->id."/groups/join/inimini/".$group->token }}" disabled aria-label="Recipient's username" aria-describedby="button-addon2">
-                            <a class="btn btn-primary" href="{{route("student.groups.generate.link", ['id'=>$group->id, 'classe_id' => $classe->id])}}" id="button-addon2">{{__("Generer un nouveau lien")}}</a>
-                        </div>
-                            
-                    @endif
-                </div>
-
-                <div class="col-md-4 text-end">
-                    <div class="dropdown m-1">
-                        <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
-                            Modifier le groupe
-                        </button>
-                        <form method="post" action="{{route("student.groups.update.theme", ['classe_id' => $classe->id, 'id' => $group->id])}}" class="dropdown-menu p-4">
-                            @csrf
-                            <div class="mb-3">
-                                <label for="theme" class="form-label">{{__("Theme du group")}}</label>
-                                <input type="text" class="form-control" id="theme" name="theme" value="{{ $group->theme }}">
-                            </div>
-                            <div class="row">
-                                <button type="submit" class="btn btn-primary w-75 mx-auto">{{__("Enregistrer")}}</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-                
-            </div>
-        @endif
         
     </div>
 
@@ -72,58 +37,43 @@
 
     
     <div class="row">
-        <div class="col-md-8">
+        <div class="col">
             <div class="row mt-2">
+                @if ($note != null)
+                    <div class="col">
+                        {{__("Note : ")}} <span class="text-success">{{ $note->value."/20" }}</span> 
+                    </div>
+                @else
+                    <div class="col d-flex">
+                        <div class="dropdown">
+                            <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+                              {{__("Attribuer une note à ce groupe")}}
+                            </button>
+                            <form method="post" action="{{route("teacher.groups.note", ['classe_id' => $classe->id, 'id' => $group->id ])}}" class="dropdown-menu p-4">
+                              @csrf
+                                <div class="mb-3">
+                                    <div class="input-group flex-nowrap">
+                                        <input type="number" min="0" max="20" class="form-control" placeholder="Ex: 14" aria-describedby="addon-wrapping" name="note">
+                                        <span class="input-group-text" id="addon-wrapping">{{__("Sur 20")}}</span>
+                                      </div>
+                                </div>
+                                <div class="row">
+                                    <button type="submit" class="btn btn-primary w-75 mx-auto">{{__("Noter")}}</button>
+                                </div>
+                              
+                            </form>
+                        </div>
+                    </div>
+                @endif
+                
                 <div class="col">
-                    {{__("Note : ")}} <span class="text-info">
-                        @if ($note != null)
-                            {{ $note->value."/20" }}
-                        @else
-                            {{ __("Non noté") }}
-                        @endif
-                        </span> 
-                </div>
-                <div class="col text-secondary">
-                    <a href="{{ route("student.groups.like", ['classe_id' => $classe->id, 'id' => $group->id]) }}" class="text-decoration-none">
-                        @if ($liked)
-                            <i class="bi bi-heart-fill text-danger"></i>
-                            <span class="text-danger">{{ $likes }}</span>
-                        @else
-                            <i class="bi bi-heart"></i>
-                            <span class="">{{ $likes }}</span>
-                        @endif
-                    </a>
+                    <i class="bi bi-heart-fill text-danger"></i>
+                    <span class="text-danger">{{ $likes }}</span>
                 </div>
                 <div class="col">
                     <i class="bi bi-chat-dots"></i> {{ $comments }}
                 </div>
             </div>
-        </div>
-        <div class="col-md-4 text-end">
-
-            @if ($isDelegate)
-                <div class="dropdown">
-                    <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
-                        <i class="fa fa-upload" aria-hidden="true"></i> Ajouter un fichier
-                    </button>
-                    <form enctype="multipart/form-data" method="post" action="{{route("student.upload.file", ['group_id' => $group->id])}}" class="dropdown-menu p-4">
-                        @csrf
-                        <div class="mb-3">
-                            <label for="title" class="form-label">{{__("Nom du fichier")}}</label>
-                            <input type="text" class="form-control" id="title" name="title" placeholder="{{__("Ex: Cahier de charges")}}" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="src" class="form-label">{{__("Fichier")}}</label>
-                            <input type="file" class="form-control" id="src" name="src" required>
-                        </div>
-                        <div class="row">
-                            <button type="submit" class="btn btn-primary w-75 mx-auto">{{__("Enregistrer")}}</button>
-                        </div>
-                    </form>
-                </div>
-            @endif
-            
-            
         </div>
     </div>
 
