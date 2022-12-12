@@ -1,7 +1,8 @@
 @extends('student.layouts.app')
 
 @section("content")
-    <div class="mb-3 py-5" style="border-radius : 10px;background-image: url({{asset('images/classe2.jpg')}}); background-size: cover;">
+    <div class="mb-3 pt-2 pb-5" style="border-radius : 10px;background-image: url({{asset('images/classe2.jpg')}}); background-size: cover;">
+        <p class="h5 text-primary text-center mx-1">{{ $classe->year->value }}</p>  
         <p class="h1 text-center mx-1">{{ $classe->name }}</p>  
         <p class="h5 text-center mx-1">{{ "Par : ".$teacher }}</p>  
     </div>
