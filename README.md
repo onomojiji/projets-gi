@@ -24,12 +24,15 @@ This project was built under the Creative Commons licence.
 
 * Run theses commands :
 
-    - To migrate database     
-        > ```php artisan migrate```
+    - To migrate database without seeders    
+        ```php artisan migrate```
     - To install node module
-        > ```npm install```
+        ```npm install```
     - To install all composer modules
-        > ```composer install```
+        ```composer install```
+        
+* After this, you can run the project with the command bellow
+    ```php artisan serve```
 
 
 ###### *************** HAPPY ENJOYING *************
