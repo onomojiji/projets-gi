@@ -5,13 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\ClassStudent;
 use App\Models\Group;
 use App\Models\StudentGroup;
+use App\Models\Teacher;
 use App\Models\Year;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class StudentController extends Controller
 {
-    //
+    // student home page
     public function home(){
         $years = Year::all();
         $cl = ClassStudent::where('student_id', Auth::user()->student->id)->orderBy("created_at", "desc")->get();
@@ -51,5 +52,25 @@ class StudentController extends Controller
         );
     }
 
-    // 
+    // student search a project
+    public function search(Request $request){
+
+        $request->validate([
+            'word' => 'required'
+        ]);
+
+        $groups = Group::where("theme", "LIKE", "%".$request->word."%")->get();
+
+        $projects = [];
+
+        foreach ($groups as $group) {
+
+            $group->note == null ? $note = "Non noté" : $note = $group->note->value."/20";
+            
+            array_push($projects, ['project' => $group, 'note' => $note, 'classe' => $group->classe->id]);
+        }
+
+        return view('student.search', ['projects' => $projects, 'word' => $request->word]);
+
+    }
 }

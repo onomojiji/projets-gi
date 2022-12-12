@@ -41,7 +41,7 @@
 
     <hr> 
 
-    <div class="row align-item-start">
+    <div class="row justify-content-start">
         @if (count($classes) > 0)
             @foreach ($classes as $classe)
                 <div class="col">
@@ -82,7 +82,7 @@
 
     <hr> 
 
-    <div class="row align-item-start">
+    <div class="row justify-content-start">
 
         @if (count($myGroups) > 0)
             @foreach ($myGroups as $mg)

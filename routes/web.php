@@ -23,6 +23,7 @@ Route::middleware(['auth', 'isStudent', 'isActive'])->prefix("student/")->group(
     // home
     Route::controller(StudentController::class)->group(function(){
         Route::get("home", "home")->name("student.home");
+        Route::post("search", "search")->name("student.search");
     });
 
     // classes
@@ -48,6 +49,7 @@ Route::middleware(['auth', 'isStudent', 'isActive'])->prefix("student/")->group(
         Route::get("group/{group_id}/file/{id}/download", "download")->name("student.download.file");
     });
     
+    
 });
 
 /*================= Teachers routes ==============================*/
@@ -55,6 +57,7 @@ Route::middleware(['auth', 'isTeacher', 'isActive'])->prefix("teacher/")->group(
     // home
     Route::controller(TeacherController::class)->group(function(){
         Route::get("home", "home")->name("teacher.home");
+        Route::post("search", "search")->name("teacher.search");
     });
 
     // classes

@@ -80,7 +80,8 @@ class GroupController extends Controller
         $files = [];
 
         foreach (Comment::where("group_id", $id)->latest()->get() as $comment) {
-            array_push($groupComments, ['comment' => $comment, 'user'=> $comment->user]);
+            $comment->user->teacher != null ? $isTeacher = True : $isTeacher = False;
+            array_push($groupComments, ['comment' => $comment, 'user'=> $comment->user, 'isTeacher' => $isTeacher]);
         }
 
         foreach ($groupFiles as $file) {
@@ -145,7 +146,8 @@ class GroupController extends Controller
         $files = [];
 
         foreach (Comment::where("group_id", $id)->latest()->get() as $comment) {
-            array_push($groupComments, ['comment' => $comment, 'user'=> $comment->user]);
+            $comment->user->teacher != null ? $isTeacher = True : $isTeacher = False;
+            array_push($groupComments, ['comment' => $comment, 'user'=> $comment->user, 'isTeacher' => $isTeacher]);
         }
 
         foreach ($groupFiles as $file) {
@@ -240,7 +242,7 @@ class GroupController extends Controller
             ]);
         }
 
-        return view("student.groups.show", ['id' => $group->id])->with('success', 'Vous avez integré le '.$group->title." avec succès");
+        return redirect()->route("student.groups.show", ['classe_id' => $classe_id,'id' => $group->id])->with('success', 'Vous avez integré le '.$group->title." avec succès");
         
     }
 

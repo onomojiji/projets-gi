@@ -16,8 +16,9 @@
           <a class="nav-link" href="#projects">{{__("Projets")}}</a>
         </li>
       </ul>
-      <form class="d-flex" role="search">
-        <input class="form-control me-2" type="search" placeholder="{{("Rechercher un projet")}}" aria-label="Search">
+      <form class="d-flex" role="search" method="POST" action="{{route("student.search")}}">
+        @csrf
+        <input class="form-control me-2" name="word" type="search" placeholder="{{("Rechercher un projet")}}" aria-label="Search">
         <button class="btn btn-outline-primary" type="submit">{{__("Rechercher")}}</button>
       </form>
 

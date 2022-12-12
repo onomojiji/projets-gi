@@ -164,7 +164,11 @@
                         <i class="bi bi-person-circle text-secondary h1"></i>
                     </div>
                     <div class="col-9 border rounded">
-                        <p class="text-secondary h5">{{ $groupComment["user"]->name }}</p>
+                        <p class="text-secondary h5">{{ $groupComment["user"]->name." - " }} 
+                            @if ($groupComment["isTeacher"])
+                                <span class="badge text-bg-primary">{{__("Enseignant")}}</span></p>
+                            @endif
+                            
                         <p>{{ $groupComment['comment']->text }}</p>
                     </div>
                     <div class="col-1 my-auto mx-auto text-secondary">

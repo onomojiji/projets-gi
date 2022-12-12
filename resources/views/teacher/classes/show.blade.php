@@ -1,9 +1,9 @@
 @extends('teacher.layouts.app')
 
 @section("content")
-    <div class="mb-3" style="padding-top: 5rem; border-radius : 10px;background-image: url({{asset('images/classe2.jpg')}}); background-size: cover;">
-        
-        <p class="h1 text-center mx-1" style="margin-bottom: 3rem">{{ $classe->name }}</p>
+    <div class="mb-3" style="padding-top: 1rem; border-radius : 10px;background-image: url({{asset('images/classe2.jpg')}}); background-size: cover;">
+        <p class="h5 text-primary text-center mx-1">{{ $classe->year->value }}</p>  
+        <p class="h1 text-center mx-1" style="margin-bottom: 2rem">{{ $classe->name }}</p>
         
         <div class="row">
             <div class="col-md-8 text-start">

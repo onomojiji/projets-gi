@@ -57,8 +57,7 @@ class ClasseController extends Controller
         $classStudents = ClassStudent::where('classe_id', $id)->get();
         $cs = [];
         $groups = [];
-        $teacher = Teacher::where('user_id', Auth::user()->id)->first();
-        $isTeacher = $teacher != null;
+        $isTeacher = Teacher::where('user_id', Auth::user()->id)->first() != null;
 
         if (!$isTeacher) {
             if (count($classe->groupes) > 0) {
@@ -81,19 +80,22 @@ class ClasseController extends Controller
             
         }
 
-        foreach ($classStudents as $class) {
-            $student = Student::find($class->student_id);
-            $user = $student->user;
+        if ($isTeacher) {
+            foreach ($classStudents as $class) {
+                $student = Student::find($class->student_id);
+                $user = $student->user;
 
-            foreach ($classe->groupes as $classGroup) {
-                if (StudentGroup::where("student_id", $class->student_id)->where("group_id", $classGroup->id)->first() != null) {
-                    $group = $classGroup;
-                    break ;
+                foreach ($classe->groupes as $classGroup) {
+                    if (StudentGroup::where("student_id", $class->student_id)->where("group_id", $classGroup->id)->first() != null) {
+                        $group = $classGroup;
+                        break ;
+                    }
                 }
+                
+                array_push($cs, ['student' => $student, 'user' => $user, 'group' => $group]);
             }
-            
-            array_push($cs, ['student' => $student, 'user' => $user, 'group' => $group]);
         }
+        
 
         foreach ($classe->groupes as $classeGroup) {
             $NbStudents = count(StudentGroup::where('group_id', $classeGroup->id)->get());
@@ -149,7 +151,7 @@ class ClasseController extends Controller
             ]);
         }
 
-        return view("teacher.classes.show", ['id' => $class->id])->with('success', 'Vous avez integré le cours'.$class->name." avec succès");
+        return redirect()->route("student.classes.show", ['id' => $class->id])->with('success', 'Vous avez integré le cours << '.$class->name." >> avec succès");
         
     }
 
