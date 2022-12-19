@@ -86,6 +86,7 @@
                             </thead>
                             <tbody>
                                 @for ($i = 1; $i <= count($groups); $i++)
+                                @if ($groups[$i-1]['group'] != null)
                                     <tr>
                                         <th scope="row">{{ $i }}</th>
                                         <td>{{ $groups[$i-1]['group']->title }}</td>
@@ -102,6 +103,8 @@
                                         @endif
                                         
                                     </tr>
+                                @endif
+                                    
                                 @endfor
                             </tbody>
                         </table>
@@ -141,9 +144,14 @@
                                     <td>{{ $classStudent[$i-1]['user']->name }}</td>
                                     <td>{{ $classStudent[$i-1]['user']->sex }}</td>
                                     <td>
-                                        <a class="text-decoration-none" href="{{route("teacher.groups.show", ['classe_id'=> $classe->id, 'id' => $classStudent[$i-1]['group']->id])}}">
-                                            {{ $classStudent[$i-1]['group']->title }}
-                                        </a> 
+                                        @if ($classStudent[$i-1]['group'] != null)
+                                            <a class="text-decoration-none" href="{{route("teacher.groups.show", ['classe_id'=> $classe->id, 'id' => $classStudent[$i-1]['group']->id])}}">
+                                                {{ $classStudent[$i-1]['group']->title }}
+                                            </a>  
+                                        @else
+                                            {{__("N'a pas de groupe")}}
+                                        @endif
+                                        
                                     </td>
                                 </tr>
                             @endfor

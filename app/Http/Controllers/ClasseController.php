@@ -88,7 +88,8 @@ class ClasseController extends Controller
                 foreach ($classe->groupes as $classGroup) {
                     if (StudentGroup::where("student_id", $class->student_id)->where("group_id", $classGroup->id)->first() != null) {
                         $group = $classGroup;
-                        break ;
+                    }else {
+                        $group = null;
                     }
                 }
                 
